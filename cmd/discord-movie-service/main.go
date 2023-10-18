@@ -6,7 +6,6 @@ import (
 	"discord-movie-service/internal/repository"
 	"discord-movie-service/router"
 
-	"github.com/gin-gonic/gin"
 	_ "github.com/go-sql-driver/mysql"
 )
 
@@ -23,8 +22,7 @@ func main() {
 	//initialize the app (this is just a list of the handlers)
 	app := &app.App{MovieHandler: movieHandler}
 
-	router.SetupRouter(app)
-	r := gin.Default()
-	r.Run(":8080")
+	router := router.SetupRouter(app)
+	router.Run(":8080")
 	defer db.Close()
 }

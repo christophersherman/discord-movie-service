@@ -6,6 +6,8 @@ import (
 	"discord-movie-service/models"
 	"io"
 	"log"
+	"net/http"
+	"strconv"
 	"strings"
 
 	"github.com/gin-gonic/gin"
@@ -52,4 +54,37 @@ func (m *MovieHandler) AddMovie(c *gin.Context) {
 	}
 
 	c.JSON(200, gin.H{"message": "Movie added successfully!"})
+}
+
+func (m *MovieHandler) GetMovie(c *gin.Context) {
+
+	movie_amount_str := c.DefaultQuery("amount", "1")
+	movie_amount, err := strconv.Atoi(movie_amount_str)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid amount parameter; it must be an integer."})
+		return
+	}
+
+	genre_str := c.DefaultQuery("genre", "")
+	year := c.DefaultQuery("year", "")
+	rating_str := c.DefaultQuery("rating", "5.0")
+	rating, err := strconv.ParseFloat(rating_str, 32)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid rating parameter; must be a float."})
+		return
+	}
+
+	var movieQuery models.MovieQueryParams
+	movieQuery.Amount = movie_amount
+	movieQuery.Genre = genre_str
+	movieQuery.Year = year
+	movieQuery.Rating = float32(rating)
+
+	movies, err := m.repo.Get(movieQuery)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"movies": movies})
 }

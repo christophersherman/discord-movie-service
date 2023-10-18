@@ -9,3 +9,10 @@ type Movie struct {
 	Rating    string `json:"averageRating"`
 	Votes     string `json:"numVotes"`
 }
+
+type MovieQueryParams struct {
+	Genre  string
+	Year   string
+	Rating float32
+	Amount int
+}
