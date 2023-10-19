@@ -56,7 +56,7 @@ func (m *MovieHandler) AddMovie(c *gin.Context) {
 	c.JSON(200, gin.H{"message": "Movie added successfully!"})
 }
 
-func (m *MovieHandler) GetMovie(c *gin.Context) {
+func (m *MovieHandler) GetMovie(c *gin.Context) { //TODO clean this ugly function up
 
 	movie_amount_str := c.DefaultQuery("amount", "1")
 	movie_amount, err := strconv.Atoi(movie_amount_str)
@@ -67,6 +67,7 @@ func (m *MovieHandler) GetMovie(c *gin.Context) {
 
 	genre_str := c.DefaultQuery("genre", "")
 	year := c.DefaultQuery("year", "")
+	runtime := c.DefaultQuery("runtime", "0")
 	rating_str := c.DefaultQuery("rating", "5.0")
 	rating, err := strconv.ParseFloat(rating_str, 32)
 	if err != nil {
@@ -79,6 +80,11 @@ func (m *MovieHandler) GetMovie(c *gin.Context) {
 	movieQuery.Genre = genre_str
 	movieQuery.Year = year
 	movieQuery.Rating = float32(rating)
+
+	movieQuery.Runtime, err = strconv.Atoi(runtime)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid runtime parameter, must be an integer"})
+	}
 
 	movies, err := m.repo.Get(movieQuery)
 	if err != nil {

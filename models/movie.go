@@ -11,8 +11,9 @@ type Movie struct {
 }
 
 type MovieQueryParams struct {
-	Genre  string
-	Year   string
-	Rating float32
-	Amount int
+	Genre   string
+	Year    string
+	Rating  float32
+	Runtime int
+	Amount  int
 }
